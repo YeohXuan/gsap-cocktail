@@ -90,10 +90,11 @@ function Hero() {
             </div>
 
             <div className="view-cocktails">
-              <div className="subtitle">
+              <p className="subtitle">
                 Every cocktail in our menu is a blend of premium ingredients,
                 creative and timeless recipes - designed to delight your senses.
-              </div>
+              </p>
+              <a href="#cocktails">View cocktails</a>
             </div>
           </div>
         </div>
