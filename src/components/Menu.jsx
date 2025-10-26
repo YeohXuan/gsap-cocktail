@@ -23,12 +23,12 @@ function Menu() {
     );
     gsap.fromTo(
       ".details h2",
-      { yPercent: 100, opacity: 0 },
+      { yPercent: 80, opacity: 0 },
       { yPercent: 0, opacity: 100, ease: "power1.inOut" }
     );
     gsap.fromTo(
       ".details p",
-      { yPercent: 100, opacity: 0 },
+      { yPercent: 80, opacity: 0 },
       { yPercent: 0, opacity: 100, ease: "power1.inOut" }
     );
 
@@ -36,7 +36,7 @@ function Menu() {
       .timeline({
         scrollTrigger: {
           trigger: "#menu",
-          start: "top top",
+          start: "top 20%",
           end: "bottom top",
           scrub: true,
         },
