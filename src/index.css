@@ -275,19 +275,25 @@ body {
   }
 
   #menu {
-    @apply relative w-full md:mt-40 mt-0 2xl:px-0 px-5 py-20 radial-gradient;
+    @apply relative w-full md:mt-10 mt-0 2xl:px-0 px-5 py-20 radial-gradient;
+    /* Add containment to prevent layout thrashing */
+    contain: layout style;
 
     #m-left-leaf {
       @apply object-contain absolute -bottom-20 left-0 md:w-fit w-1/3;
+      pointer-events: none;
+      /* Prevent repaint triggers */
+      will-change: auto;
     }
 
     #m-right-leaf {
-      @apply object-contain absolute -top-40 right-0 md:w-fit w-1/4;
+      @apply object-contain absolute -top-10 right-0 md:w-fit w-1/4;
+      pointer-events: none;
+      will-change: auto;
     }
 
     .cocktail-tabs {
-      @apply grid md:grid-cols-4 grid-cols-2 md:gap-20 gap-10 sm:mb-32 mb-20 relative z-10 md:max-w-6xl md:mx-auto;
-
+      @apply grid md:grid-cols-4 grid-cols-2 md:gap-20 gap-10 sm:mb-16 mb-10 relative z-10 md:max-w-6xl md:mx-auto;
       button {
         @apply md:text-3xl text-xl pb-2 cursor-pointer hover:text-yellow hover:border-yellow border-b-1 transition-colors font-modern-negra;
       }
@@ -295,9 +301,14 @@ body {
 
     .content {
       @apply flex flex-col justify-between items-center container mx-auto relative;
+      /* Critical: Give it a defined height so absolute children don't cause reflow */
+      min-height: 75vh;
 
       .arrows {
         @apply flex items-center justify-between w-full absolute;
+        /* Position arrows properly */
+        top: 45%;
+        z-index: 10;
 
         button {
           @apply text-white hover:text-yellow cursor-pointer transition-colors max-w-36;
@@ -311,6 +322,9 @@ body {
 
     .cocktail {
       @apply flex-center mt-10;
+      /* Add GPU acceleration without affecting layout */
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
 
       img {
         @apply object-contain h-[60vh];
@@ -319,9 +333,16 @@ body {
 
     .recipe {
       @apply flex max-md:flex-col gap-10 md:items-center justify-between w-full lg:absolute bottom-0;
+      /* This is the key fix - prevent the absolute element from triggering repaints */
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
 
       .info {
-        @apply space-y-4 lg:translate-y-20;
+        @apply space-y-4;
+        /* Replace translate with padding to avoid transform repaints */
+        @screen lg {
+          padding-bottom: 5rem;
+        }
 
         #title {
           @apply font-modern-negra md:text-6xl text-3xl text-yellow max-w-40;
