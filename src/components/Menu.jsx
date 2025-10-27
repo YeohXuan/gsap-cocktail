@@ -2,6 +2,9 @@ import { useRef, useState } from "react";
 import { sliderLists } from "../../constants";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function Menu() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -9,6 +12,22 @@ function Menu() {
   const totalCocktails = sliderLists.length;
   const contentRef = useRef();
 
+  // Separate: ScrollTrigger only runs once on mount
+  useGSAP(() => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#menu",
+          start: "top 20%",
+          end: "bottom top",
+          scrub: true,
+        },
+      })
+      .to("#m-right-leaf", { y: 220 }, 0)
+      .to("#m-left-leaf", { y: -220 }, 0);
+  }, []); // Empty dependency array - only run once!
+
+  // Separate: Animations that run on currentIndex change
   useGSAP(() => {
     gsap.fromTo("#title", { opacity: 0 }, { opacity: 1, duration: 1 });
     gsap.fromTo(
@@ -31,19 +50,7 @@ function Menu() {
       { yPercent: 80, opacity: 0 },
       { yPercent: 0, opacity: 100, ease: "power1.inOut" }
     );
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: "#menu",
-          start: "top 20%",
-          end: "bottom top",
-          scrub: true,
-        },
-      })
-      .to("#m-right-leaf", { y: 220 }, 0)
-      .to("#m-left-leaf", { y: -220 }, 0);
-  }, [currentIndex]);
+  }, [currentIndex, forward]); // Runs when currentIndex changes
 
   const goToSlide = (index) => {
     if (index > currentIndex) {
@@ -77,15 +84,12 @@ function Menu() {
         alt="right-leaf"
         id="m-right-leaf"
       />
-
       <h2 id="menu-heading" className="sr-only">
         Cocktail Menu
       </h2>
-
       <nav className="cocktail-tabs" aria-label="Cocktail navigation">
         {sliderLists.map((list, index) => {
           const isActive = index === currentIndex;
-
           return (
             <button
               key={list.id}
@@ -101,7 +105,6 @@ function Menu() {
           );
         })}
       </nav>
-
       <div className="content w-[80%]">
         <div className="arrows">
           <button
@@ -115,7 +118,6 @@ function Menu() {
               aria-hidden="true"
             />
           </button>
-
           <button
             className="text-right"
             onClick={() => goToSlide(currentIndex + 1)}
@@ -128,17 +130,14 @@ function Menu() {
             />
           </button>
         </div>
-
         <div className="cocktail">
           <img src={currentCocktail.image} className="object-contain" />
         </div>
-
         <div className="recipe">
           <div className="info" ref={contentRef}>
             <p>Recipe for:</p>
             <p id="title">{currentCocktail.name}</p>
           </div>
-
           <div className="details">
             <h2>{currentCocktail.title}</h2>
             <p>{currentCocktail.description}</p>
@@ -148,5 +147,4 @@ function Menu() {
     </section>
   );
 }
-
 export default Menu;
